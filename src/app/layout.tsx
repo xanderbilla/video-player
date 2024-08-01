@@ -19,11 +19,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`font-sans min-h-screen px-12 md:px-24 ${inter.className}`}
+        className={`font-sans h-screen ${inter.className}`}
       >
-        <Navbar />
         {children}
-        <Footer />
       </body>
     </html>
   );

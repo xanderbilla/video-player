@@ -11,7 +11,7 @@ export default function Navbar({}: Props) {
       <ProjectLogo onlyProjectLogo />
       <div className="flex justify-start items-center font-medium gap-4">
         <Link
-          href="https://github.com/xanderbilla/next-amplify-gen2"
+          href="https://github.com/xanderbilla/video-player"
           target="_blank"
         >
           <Image src="/icons/github.svg" alt="Menu" width={36} height={36} />

@@ -1,9 +1,17 @@
-import ImageGrid from "./Layout/ImageGrid";
+import { Suspense } from 'react'
+import VidPlayer from '@/app/Layout/VidPlayer'
+import Loading from '@/app/components/Loading'
 
-export default function Home() {
+function SearchBarFallback() {
+  return <Loading/>
+}
+ 
+export default function Page() {
   return (
-    <main className="min-h-[calc(100vh-14rem)] flex flex-col items-center justify-center gap-8 my-8">
-      <ImageGrid />
-    </main>
-  );
+    <>
+        <Suspense fallback={<SearchBarFallback />}>
+          <VidPlayer/>
+        </Suspense>
+    </>
+  )
 }

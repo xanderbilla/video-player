@@ -10,25 +10,27 @@ import Backward from "./BackwardIcon";
 import Forward from "./ForwardIcon";
 import FullScrIcon from "./FullScrIcon";
 import CaptionIcon from "./CaptionIcon";
-
-const Video = styled.video<{ cover?: string }>`
-  flex-shrink: 1;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 10px;
-  background-image: ${({ cover }) => (cover ? `url(${cover})` : "none")};
-  background-size: cover;
-`;
+import Image from "next/image";
+import InfoIcon from "./InfoIcon";
 
 interface Props {
   src: string;
   muted?: boolean;
   autoPlay?: boolean;
   cover?: string;
+  title: string;
 }
 
+const Video = styled.video<{ cover?: string }>`
+  flex-shrink: 1;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  background-color: black;
+`;
+
 const Player = (props: Props) => {
-  const { src, autoPlay, muted, cover } = props;
+  const { src, autoPlay, muted, cover, title } = props;
   const [isWaiting, setIsWaiting] = useState(false);
   const [isPlaying, setIsPlaying] = useState(autoPlay);
   const [playbackRate, setPlaybackRate] = useState(1);
@@ -44,24 +46,24 @@ const Player = (props: Props) => {
     if (!videoRef.current) {
       return;
     }
-
+  
     const onWaiting = () => {
       if (isPlaying) setIsPlaying(false);
       setIsWaiting(true);
     };
-
+  
     const onPlay = () => {
       if (isWaiting) setIsWaiting(false);
       setIsPlaying(true);
     };
-
+  
     const onPause = () => {
       setIsPlaying(false);
       setIsWaiting(false);
     };
-
+  
     const element = videoRef.current;
-
+  
     const onProgress = () => {
       if (!element.buffered || !bufferRef.current) return;
       if (!element.buffered.length) return;
@@ -71,7 +73,7 @@ const Player = (props: Props) => {
         bufferRef.current.style.width = (bufferedEnd / duration) * 100 + "%";
       }
     };
-
+  
     const onTimeUpdate = () => {
       setIsWaiting(false);
       if (!element.buffered || !progressRef.current) return;
@@ -83,15 +85,15 @@ const Player = (props: Props) => {
           ((element.currentTime / duration) * 100).toFixed(2) + "%";
       }
     };
-
+  
     element.addEventListener("progress", onProgress);
     element.addEventListener("timeupdate", onTimeUpdate);
-
+  
     element.addEventListener("waiting", onWaiting);
     element.addEventListener("play", onPlay);
     element.addEventListener("playing", onPlay);
     element.addEventListener("pause", onPause);
-
+  
     // clean up
     return () => {
       element.removeEventListener("waiting", onWaiting);
@@ -101,7 +103,7 @@ const Player = (props: Props) => {
       element.removeEventListener("progress", onProgress);
       element.removeEventListener("timeupdate", onTimeUpdate);
     };
-  }, [videoRef.current]);
+  }, [videoRef.current, isPlaying, isWaiting]);
 
   // This is where the playback rate is set on the video element.
   useEffect(() => {
@@ -140,9 +142,9 @@ const Player = (props: Props) => {
     videoRef.current.currentTime = newTimeSec;
   };
 
-  const forward30Sec = () => {
+  const forward15Sec = () => {
     if (!videoRef.current) return;
-    const newTimeSec = videoRef.current.currentTime + 30;
+    const newTimeSec = videoRef.current.currentTime + 15;
     videoRef.current.currentTime = newTimeSec;
   };
 
@@ -161,12 +163,17 @@ const Player = (props: Props) => {
     }
   };
 
+  const handleContextMenu = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+  };
+
   return (
     <div
-      className="h-full flex flex-col cursor-pointer items-center justify-center 
-    relative rounded-10 overflow-hidden hover:opacity-100"
+      className="h-full w-full flex flex-col cursor-pointer items-center justify-center 
+    relative overflow-hidden hover:opacity-100 bg-black"
       onMouseEnter={() => setIsHovered(false)}
       onMouseLeave={() => setIsHovered(true)}
+      onContextMenu={handleContextMenu}
     >
       <Video
         autoPlay={autoPlay}
@@ -180,24 +187,44 @@ const Player = (props: Props) => {
 
       {/* Play Icon */}
       {!isPlaying && !isWaiting && (
-        <PlayIcon
-          onClick={handlePlayPauseClick}
-          className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-16 w-16 "
+        <div className="w-full h-full">
+          <PlayIcon
+            onClick={handlePlayPauseClick}
+            className={`absolute top-1/2 z-50 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-16 w-16 "
           } transition-opacity duration-300 ease-in-out`}
-        />
+          />
+        </div>
       )}
+
+      {/* Cover Image */}
+      {cover &&
+        !isPlaying &&
+        !isWaiting &&
+        videoRef.current?.currentTime === 0 && (
+          <Image
+            src={cover}
+            alt="cover"
+            layout="fill"
+            objectFit="cover"
+            className="absolute z-10 top-0 left-0 h-full w-full object-cover"
+          />
+        )}
 
       {/* controls */}
       {isPlaying && (
         <>
-          {/* Full Screen Button */}
-          <FullScrIcon
-            onClick={fullScreen}
-            className={`flex items-center justify-center absolute top-4 right-4 h-8 w-8 ${
-              isHovered ? "opacity-0" : "opacity-100"
-            }
-        transition-opacity duration-300 ease-in-out`}
-          />
+          <div
+            className={`px-4 absolute inset-x-0 top-0 h-20 bg-black py-4 bg-opacity-50 w-full 
+          transition-opacity duration-1000 ease-in-out flex items-center justify-between ${
+            isHovered ? "opacity-0" : "opacity-100"
+          }`}
+          >
+            <h1 className="text-white/80 text-2xl text-center">{title}</h1>
+            <InfoIcon
+              onClick={() => {}}
+              className="hover:bg-neutral-500 rounded-full p-2 h-10 w-10"
+            />
+          </div>
 
           <div
             className={`absolute inset-x-0 bottom-0 h-20 w-full flex-col items-center 
@@ -223,7 +250,7 @@ const Player = (props: Props) => {
               />
             </div>
 
-            <div className="w-full h-full flex items-center justify-between">
+            <div className="w-full h-16 flex items-center justify-between">
               <div className="w-full h-full flex items-center justify-start gap-4">
                 {/* Play Pause Button */}
                 <div className="w-8 h-full flex items-center justify-center ">
@@ -235,6 +262,12 @@ const Player = (props: Props) => {
                   )}
                 </div>
 
+                {/* forward and backward 10 sec */}
+                <div className="w-auto h-full flex items-center justify-between gap-2">
+                  <Backward onClick={backward10Sec} />
+                  <Forward onClick={forward15Sec} />
+                </div>
+
                 {/* Elapsed time tracker */}
                 <ElapsedTimeTracker
                   videoRef={videoRef}
@@ -242,15 +275,9 @@ const Player = (props: Props) => {
                   durationSec={durationSec}
                   setElapsedSec={setElapsedSec}
                 />
-
-                {/* forward and backward 10 sec */}
-                <div className="w-auto h-full flex items-center justify-between gap-2">
-                  <Backward onClick={backward10Sec} />
-                  <Forward onClick={forward30Sec} />
-                </div>
               </div>
 
-              <div className="w-full h-full flex items-center justify-end gap-2">
+              <div className="w-full h-full flex items-center justify-end gap-4">
                 {/* Caption */}
                 <CaptionIcon />
 
@@ -259,6 +286,8 @@ const Player = (props: Props) => {
                   videoRef={videoRef}
                   setPlaybackRate={setPlaybackRate}
                 />
+                {/* Full Screen Button */}
+                <FullScrIcon onClick={fullScreen} />
               </div>
             </div>
           </div>

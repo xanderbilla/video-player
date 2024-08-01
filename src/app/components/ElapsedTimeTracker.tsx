@@ -69,8 +69,8 @@ const ElapsedTimeTracker = (props: Props) => {
   return (
     <div className="w-auto flex items-center justify-between gap-2 text-white font-medium">
       <div className="">{formatTime(videoRef.current?.currentTime ?? 0)}</div>
-      {" | "}
-      <div className="p-1 px-2 rounded-sm bg-slate-200/50">
+      <span className="hidden md:block ">{" | "}</span>
+      <div className="hidden md:block p-1 px-2 rounded-md bg-slate-200/50">
         {displayTime}</div>
     </div>
   );
