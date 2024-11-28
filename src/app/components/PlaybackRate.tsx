@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useEffect, useRef, useState } from "react";
-import PlayBackRateIcon from "./PlayBackRateIcon";
+import PlayBackRateIcon from "../icons/PlayBackRateIcon";
 
 interface Props {
   videoRef: React.RefObject<HTMLVideoElement>;

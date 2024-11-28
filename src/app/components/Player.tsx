@@ -1,17 +1,18 @@
 "use client";
 import styled from "@emotion/styled";
 import React, { useEffect, useRef, useState } from "react";
-import PlayIcon from "./PlayIcon";
-import PauseIcon from "./PauseIcon";
+import PlayIcon from "../icons/PlayIcon";
+import PauseIcon from "../icons/PauseIcon";
 import ElapsedTimeTracker from "./ElapsedTimeTracker";
 import PlaybackRate from "./PlaybackRate";
 import Loading from "@/app/components/Loading";
-import Backward from "./BackwardIcon";
-import Forward from "./ForwardIcon";
-import FullScrIcon from "./FullScrIcon";
-import CaptionIcon from "./CaptionIcon";
+import Backward from "../icons/BackwardIcon";
+import Forward from "../icons/ForwardIcon";
+import FullScrIcon from "../icons/FullScrIcon";
+import CaptionIcon from "../icons/CaptionIcon";
 import Image from "next/image";
-import InfoIcon from "./InfoIcon";
+import InfoIcon from "../icons/InfoIcon";
+import Info from "../Layout/Info";
 
 interface Props {
   src: string;
@@ -37,6 +38,7 @@ const Player = (props: Props) => {
   const [durationSec, setDurationSec] = useState(1);
   const [elapsedSec, setElapsedSec] = useState(1);
   const [isHovered, setIsHovered] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
@@ -46,24 +48,24 @@ const Player = (props: Props) => {
     if (!videoRef.current) {
       return;
     }
-  
+
     const onWaiting = () => {
       if (isPlaying) setIsPlaying(false);
       setIsWaiting(true);
     };
-  
+
     const onPlay = () => {
       if (isWaiting) setIsWaiting(false);
       setIsPlaying(true);
     };
-  
+
     const onPause = () => {
       setIsPlaying(false);
       setIsWaiting(false);
     };
-  
+
     const element = videoRef.current;
-  
+
     const onProgress = () => {
       if (!element.buffered || !bufferRef.current) return;
       if (!element.buffered.length) return;
@@ -73,7 +75,7 @@ const Player = (props: Props) => {
         bufferRef.current.style.width = (bufferedEnd / duration) * 100 + "%";
       }
     };
-  
+
     const onTimeUpdate = () => {
       setIsWaiting(false);
       if (!element.buffered || !progressRef.current) return;
@@ -85,15 +87,15 @@ const Player = (props: Props) => {
           ((element.currentTime / duration) * 100).toFixed(2) + "%";
       }
     };
-  
+
     element.addEventListener("progress", onProgress);
     element.addEventListener("timeupdate", onTimeUpdate);
-  
+
     element.addEventListener("waiting", onWaiting);
     element.addEventListener("play", onPlay);
     element.addEventListener("playing", onPlay);
     element.addEventListener("pause", onPause);
-  
+
     // clean up
     return () => {
       element.removeEventListener("waiting", onWaiting);
@@ -105,12 +107,17 @@ const Player = (props: Props) => {
     };
   }, [videoRef.current, isPlaying, isWaiting]);
 
-  // This is where the playback rate is set on the video element.
   useEffect(() => {
     if (!videoRef.current) return;
     if (videoRef.current.playbackRate === playbackRate) return;
     videoRef.current.playbackRate = playbackRate;
   }, [playbackRate]);
+
+  useEffect(() => {
+    if (showInfo && isPlaying && videoRef.current) {
+      videoRef.current.pause();
+    }
+  }, [showInfo, isPlaying]);
 
   const handlePlayPauseClick = () => {
     if (videoRef.current) {
@@ -154,8 +161,6 @@ const Player = (props: Props) => {
     videoRef.current.currentTime = newTimeSec;
   };
 
-  //full screen
-
   const fullScreen = () => {
     if (!videoRef.current) return;
     if (videoRef.current.requestFullscreen) {
@@ -185,8 +190,7 @@ const Player = (props: Props) => {
       />
       {isWaiting && <Loading />}
 
-      {/* Play Icon */}
-      {!isPlaying && !isWaiting && (
+      {!isPlaying && !isWaiting && !showInfo && (
         <div className="w-full h-full">
           <PlayIcon
             onClick={handlePlayPauseClick}
@@ -196,7 +200,6 @@ const Player = (props: Props) => {
         </div>
       )}
 
-      {/* Cover Image */}
       {cover &&
         !isPlaying &&
         !isWaiting &&
@@ -210,22 +213,28 @@ const Player = (props: Props) => {
           />
         )}
 
-      {/* controls */}
-      {isPlaying && (
-        <>
+      <>
+        {!showInfo ? (
           <div
-            className={`px-4 absolute inset-x-0 top-0 h-20 bg-black py-4 bg-opacity-50 w-full 
-          transition-opacity duration-1000 ease-in-out flex items-center justify-between ${
-            isHovered ? "opacity-0" : "opacity-100"
-          }`}
+            className={`px-4 absolute inset-x-0 top-0 h-24 bg-black py-4 bg-opacity-50 w-full 
+        transition-opacity duration-1000 ease-in-out flex items-center justify-between text-white/80 text-2xl ${
+          isHovered ? "opacity-0" : "opacity-100"
+        }`}
           >
-            <h1 className="text-white/80 text-2xl text-center">{title}</h1>
-            <InfoIcon
-              onClick={() => {}}
-              className="hover:bg-neutral-500 rounded-full p-2 h-10 w-10"
-            />
+            <h1 className="text-center text-3xl">{title}</h1>
+            <button
+              onClick={() => setShowInfo(true)}
+              className="hover:bg-gray-200/10 font-medium rounded-full p-2 px-3 gap-2 flex items-center justify-center"
+            >
+              <InfoIcon className="h-6 w-6" />
+              <span>Info</span>
+            </button>
           </div>
+        ) : (
+          <Info setShowInfo={setShowInfo} />
+        )}
 
+        {!showInfo && (
           <div
             className={`absolute inset-x-0 bottom-0 h-20 w-full flex-col items-center 
           justify-center px-2 gap-4 bg-black py-4 bg-opacity-50 ${
@@ -233,26 +242,24 @@ const Player = (props: Props) => {
           }
           transition-opacity duration-300 ease-in-out`}
           >
-            {/* Progress bar */}
             <div
-              className="h-1 w-full bg-slate-600 rounded-full relative"
+              className="h-1 w-full bg-white rounded-full relative"
               onClick={progressBar}
             >
               <div
-                ref={bufferRef}
-                className="h-full bg-slate-400 rounded-full"
-                style={{ position: "absolute", top: 0, left: 0 }}
+              ref={bufferRef}
+              className="h-full bg-gray-400 rounded-full"
+              style={{ position: "absolute", top: 0, left: 0 }}
               />
               <div
-                ref={progressRef}
-                className="h-full bg-white rounded-full"
-                style={{ position: "absolute", top: 0, left: 0 }}
+              ref={progressRef}
+              className="h-full bg-slate-800 rounded-full"
+              style={{ position: "absolute", top: 0, left: 0 }}
               />
             </div>
 
             <div className="w-full h-16 flex items-center justify-between">
               <div className="w-full h-full flex items-center justify-start gap-4">
-                {/* Play Pause Button */}
                 <div className="w-8 h-full flex items-center justify-center ">
                   {!isPlaying && !isWaiting && (
                     <PlayIcon onClick={handlePlayPauseClick} />
@@ -262,13 +269,11 @@ const Player = (props: Props) => {
                   )}
                 </div>
 
-                {/* forward and backward 10 sec */}
                 <div className="w-auto h-full flex items-center justify-between gap-2">
                   <Backward onClick={backward10Sec} />
                   <Forward onClick={forward15Sec} />
                 </div>
 
-                {/* Elapsed time tracker */}
                 <ElapsedTimeTracker
                   videoRef={videoRef}
                   progressRef={progressRef}
@@ -278,21 +283,18 @@ const Player = (props: Props) => {
               </div>
 
               <div className="w-full h-full flex items-center justify-end gap-4">
-                {/* Caption */}
                 <CaptionIcon />
 
-                {/* Playback Rate */}
                 <PlaybackRate
                   videoRef={videoRef}
                   setPlaybackRate={setPlaybackRate}
                 />
-                {/* Full Screen Button */}
                 <FullScrIcon onClick={fullScreen} />
               </div>
             </div>
           </div>
-        </>
-      )}
+        )}
+      </>
     </div>
   );
 };
