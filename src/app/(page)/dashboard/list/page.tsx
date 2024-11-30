@@ -4,6 +4,7 @@ import React from "react";
 import { ItemCard } from "../components/itemCard";
 import Image from "next/image";
 import { useState } from "react";
+import DataList from "../components/dataList";
 
 type Props = {};
 
@@ -83,8 +84,26 @@ const data = [
     content: <DummyContent />,
   },
 ];
+
+const dataItems = [
+  {
+    id: 1,
+    name: "John Doe",
+    value: "Apple Inc.",
+  },
+  {
+    id: 2,
+    name: "Jane Doe",
+    value: "Google Inc.",
+  },
+  {
+    id: 3,
+    name: "John Smith",
+    value: "Facebook Inc.",
+  },
+];
 export default function Page({}: Props) {
-  const [activeTab, setActiveTab] = useState(TABS.LIST);
+  const [activeTab, setActiveTab] = useState(TABS.GRID);
 
   return (
     <div className="min-h-[calc(100vh-15rem)] md:min-h-[calc(100vh-24rem)] space-y-10">
@@ -135,7 +154,11 @@ export default function Page({}: Props) {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            List view
+            <DataList
+              data={dataItems}
+              onEdit={(id) => console.log(`Edit item with id: ${id}`)}
+              onDelete={(id) => console.log(`Delete item with id: ${id}`)}
+            />
           </div>
         )}
       </div>

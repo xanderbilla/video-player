@@ -20,7 +20,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const menuItems = [
-    { name: "Home", icon: <HomeIcon />, url: "home" },
+    { name: "Home", icon: <HomeIcon />, url: "" },
     { name: "List", icon: <ListIcon />, url: "list" },
   ];
 
