@@ -6,16 +6,22 @@ import { usePathname } from "next/navigation";
 import React from "react";
 import MenuIcon from "../icons/MenuIcon";
 import CloseBtnIcon from "../icons/closeBtnIcon";
+import { useAuth } from "react-oidc-context";
+import Loading from "../components/Loading";
+import NotFound from "../not-found";
 
 type Props = {};
 
 function DesktopNav({
   navLinks,
-  isLogin,
+  signOutRedirect,
 }: {
   navLinks: { name: string; url: string }[];
-  isLogin: boolean;
+  signOutRedirect: () => void;
 }) {
+  const auth = useAuth();
+  const isLogin = auth.isAuthenticated;
+
   return (
     <div className="hidden lg:flex justify-start items-center font-medium space-x-2">
       <div className="space-x-6 mr-4">
@@ -24,31 +30,30 @@ function DesktopNav({
             {link.name}
           </Link>
         ))}
+        {isLogin && <Link href="/dashboard">Dashboard</Link>}
       </div>
-      <Link
-        href={isLogin ? "/dashboard" : "/login"}
+      <button
+        onClick={() =>
+          isLogin ? signOutRedirect() : auth.signinRedirect()
+        }
         className="px-4 py-2 bg-gray-200 text-black rounded-full hover:bg-gray-300 transition ease-in-out"
       >
-        {isLogin ? "Dashboard" : "Login"}
-      </Link>
-      <Link
-        href={isLogin ? "/logout" : "/register"}
-        className="px-4 py-2 border-2 border-gray-500 text-white rounded-full hover:bg-gray-600 transition ease-in-out"
-      >
-        {isLogin ? "Logout" : "Register"}
-      </Link>
+        {isLogin ? "Logout" : "Login"}
+      </button>
     </div>
   );
 }
 
 function MobileNav({
   navLinks,
-  isLogin,
+  signOutRedirect,
 }: {
   navLinks: { name: string; url: string }[];
-  isLogin: boolean;
+  signOutRedirect: () => void;
 }) {
   const [isOpen, setIsOpen] = React.useState(false);
+  const auth = useAuth();
+  const isLogin = auth.isAuthenticated;
 
   return (
     <div className="lg:hidden">
@@ -81,18 +86,19 @@ function MobileNav({
               {link.name}
             </Link>
           ))}
-          <Link
-            href={`${isLogin ? "/dashboard" : "/login"}`}
-            className="block px-4 py-2 bg-gray-200 text-black rounded-full hover:bg-gray-300 transition ease-in-out"
-          >
-            {isLogin ? "Dashboard" : "Login"}
-          </Link>
-          <Link
-            href={`${isLogin ? "/logout" : "/register"}`}
+          {isLogin && (
+            <Link href="/dashboard" className="block px-4 py-2">
+              Dashboard
+            </Link>
+          )}
+          <button
+            onClick={() =>
+              isLogin ? signOutRedirect() : auth.signinRedirect()
+            }
             className="block px-4 py-2 border-2 border-gray-500 text-black rounded-full hover:bg-gray-600 transition ease-in-out"
           >
-            {isLogin ? "Logout" : "Register"}
-          </Link>
+            {auth.isLoading ? "Loading..." : isLogin ? "Logout" : "Login"}
+          </button>
         </nav>
       </div>
     </div>
@@ -100,7 +106,7 @@ function MobileNav({
 }
 
 export default function Navbar({}: Props) {
-  const isLogin = true;
+  const auth = useAuth();
   const path = usePathname();
   const pathUrl = path.split("/")[1];
   const isPlayer = pathUrl === "player" || pathUrl === "dashboard";
@@ -120,6 +126,27 @@ export default function Navbar({}: Props) {
     },
   ];
 
+  
+  const signOutRedirect = () => {
+    auth.removeUser();
+    const clientId = process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID;
+    const logoutUri = process.env.NEXT_PUBLIC_LOGOUT_URI;
+    const cognitoDomain = process.env.NEXT_PUBLIC_COGNITO_DOMAIN;
+    if (logoutUri && cognitoDomain) {
+      window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
+    } else {
+      console.error("Logout URI or Cognito Domain is not defined");
+    }
+  };
+
+  if (auth.isLoading) {
+    return <Loading />;
+  }
+
+  if (auth.error) {
+    return <NotFound />;
+  }
+
   return (
     <div
       className={`${
@@ -127,8 +154,8 @@ export default function Navbar({}: Props) {
       } w-full h-24 flex items-center justify-between gap-4 p-4 md:p-12 lg:p-20`}
     >
       <ProjectLogo onlyProjectLogo />
-      <DesktopNav navLinks={navLinks} isLogin={isLogin} />
-      <MobileNav navLinks={navLinks} isLogin={isLogin} />
+      <DesktopNav navLinks={navLinks} signOutRedirect={signOutRedirect} />
+      <MobileNav navLinks={navLinks} signOutRedirect={signOutRedirect} />
     </div>
   );
 }
