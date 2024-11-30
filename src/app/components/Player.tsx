@@ -14,6 +14,7 @@ import Image from "next/image";
 import InfoIcon from "../icons/InfoIcon";
 import Info from "../Layout/Info";
 import VolumeController from "./VolumeController";
+import ArrowLeftIcon from "../icons/ArrowLeftIcon";
 
 interface Props {
   src: string;
@@ -216,12 +217,18 @@ const Player = (props: Props) => {
       <>
         {!showInfo ? (
           <div
-            className={`px-4 absolute inset-x-0 top-0 h-24 bg-black py-4 bg-opacity-50 w-full 
+            className={`px-4 absolute z-50 inset-x-0 top-0 h-24 bg-black py-4 bg-opacity-50 w-full 
         transition-opacity duration-1000 ease-in-out flex items-center justify-between text-white/80 text-2xl ${
           isHovered ? "opacity-0" : "opacity-100"
         }`}
           >
-            <h1 className="text-center text-3xl">{title}</h1>
+            <div className="flex items-center justify-center space-x-4">
+              <ArrowLeftIcon
+                onClick={() => window.history.back()}
+                className="transition-transform duration-300 ease-in-out hover:scale-110"
+              />
+              <h1 className="text-center text-3xl">{title}</h1>
+            </div>
             <button
               onClick={() => setShowInfo(true)}
               className="hover:bg-gray-200/10 font-medium rounded-full p-2 px-3 gap-2 flex items-center justify-center transition-transform duration-300 ease-in-out hover:scale-110"

@@ -16,7 +16,7 @@ export default function Info({ setShowInfo }: Props) {
 
   return (
     <div
-      className={`p-10 absolute inset-x-0 top-0 h-[calc(100vh)] bg-black bg-opacity-75 w-full 
+      className={`p-10 z-50 absolute inset-x-0 top-0 h-[calc(100vh)] bg-black bg-opacity-75 w-full 
         transition-opacity duration-1000 ease-in-out flex flex-col ${
           show ? "items-start" : "items-center"
         } justify-start text-white/80 text-2xl opacity-100"

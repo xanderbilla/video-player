@@ -112,7 +112,7 @@ export default function Navbar({}: Props) {
     },
     {
       name: "Player",
-      url: "/player",
+      url: "/player?view=9ce3b1b1-1b1b-11ec-8c4e-0242ac130003",
     },
     {
       name: "Contact",
