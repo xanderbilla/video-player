@@ -4,6 +4,8 @@ import ProjectLogo from "@/app/components/ProjectLogo";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
+import MenuIcon from "../icons/MenuIcon";
+import CloseBtnIcon from "../icons/closeBtnIcon";
 
 type Props = {};
 
@@ -15,37 +17,25 @@ function DesktopNav({
   isLogin: boolean;
 }) {
   return (
-    <div className="hidden lg:flex justify-start items-center font-medium space-x-4">
-      <div className="space-x-6">
+    <div className="hidden lg:flex justify-start items-center font-medium space-x-2">
+      <div className="space-x-6 mr-4">
         {navLinks.map((link) => (
           <Link key={link.name} href={link.url}>
             {link.name}
           </Link>
         ))}
-        {isLogin && (
-          <Link
-            href="/dashboard"
-            className="px-4 py-2 bg-white text-black rounded-full hover:bg-gray-200 transition ease-in-out"
-          >
-            Dashboard
-          </Link>
-        )}
       </div>
       <Link
-        href="/login"
-        className={`${
-          isLogin ? "hidden" : ""
-        } px-4 py-2 bg-gray-200 text-black rounded-full hover:bg-gray-300 transition ease-in-out`}
+        href={isLogin ? "/dashboard" : "/login"}
+        className="px-4 py-2 bg-gray-200 text-black rounded-full hover:bg-gray-300 transition ease-in-out"
       >
-        Login
+        {isLogin ? "Dashboard" : "Login"}
       </Link>
       <Link
-        href="/register"
-        className={`${
-          isLogin ? "hidden" : ""
-        }  px-4 py-2 border-2 border-gray-500 text-white rounded-full hover:bg-gray-600 transition ease-in-out"`}
+        href={isLogin ? "/logout" : "/register"}
+        className="px-4 py-2 border-2 border-gray-500 text-white rounded-full hover:bg-gray-600 transition ease-in-out"
       >
-        Register
+        {isLogin ? "Logout" : "Register"}
       </Link>
     </div>
   );
@@ -67,21 +57,7 @@ function MobileNav({
         className="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
       >
         <span className="sr-only">Open main menu</span>
-        <svg
-          className="h-6 w-6"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          aria-hidden="true"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M4 6h16M4 12h16m-7 6h7"
-          />
-        </svg>
+        <MenuIcon />
       </button>
 
       <div
@@ -96,21 +72,7 @@ function MobileNav({
             className="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
           >
             <span className="sr-only">Close main menu</span>
-            <svg
-              className="h-6 w-6"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+            <CloseBtnIcon color="#fff" />
           </button>
         </div>
         <nav className="mt-5 space-y-4">
@@ -119,30 +81,18 @@ function MobileNav({
               {link.name}
             </Link>
           ))}
-          {isLogin && (
-            <Link
-              href="/dashboard"
-              className="block px-4 py-2 bg-white text-black rounded-full hover:bg-gray-200 transition ease-in-out"
-            >
-              Dashboard
-            </Link>
-          )}
-          {!isLogin && (
-            <>
-              <Link
-                href="/login"
-                className="block px-4 py-2 bg-gray-200 text-black rounded-full hover:bg-gray-300 transition ease-in-out"
-              >
-                Login
-              </Link>
-              <Link
-                href="/register"
-                className="block px-4 py-2 border-2 border-gray-500 text-black rounded-full hover:bg-gray-600 transition ease-in-out"
-              >
-                Register
-              </Link>
-            </>
-          )}
+          <Link
+            href={`${isLogin ? "/dashboard" : "/login"}`}
+            className="block px-4 py-2 bg-gray-200 text-black rounded-full hover:bg-gray-300 transition ease-in-out"
+          >
+            {isLogin ? "Dashboard" : "Login"}
+          </Link>
+          <Link
+            href={`${isLogin ? "/logout" : "/register"}`}
+            className="block px-4 py-2 border-2 border-gray-500 text-black rounded-full hover:bg-gray-600 transition ease-in-out"
+          >
+            {isLogin ? "Logout" : "Register"}
+          </Link>
         </nav>
       </div>
     </div>
