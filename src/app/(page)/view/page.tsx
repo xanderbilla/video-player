@@ -1,5 +1,5 @@
 import { Suspense } from 'react'
-import VidPlayer from '../../Layout/VidPlayer'
+import VidPlayer from '@/app/Layout/VidPlayer'
 
 function SearchBarFallback() {
   return <>placeholder</>
