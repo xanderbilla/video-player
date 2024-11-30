@@ -11,7 +11,7 @@ export default function Footer({}: Props) {
   const year = new Date().getFullYear();
   const path = usePathname();
   const pathUrl = path.split("/")[1];
-  const isPlayer = pathUrl === "player";
+  const isPlayer = pathUrl === "player" || pathUrl === "dashboard";
   return (
     <div
       className={`${

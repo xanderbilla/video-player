@@ -3,10 +3,16 @@ import React from "react";
 import HomeIcon from "@/app/icons/HomeIcon";
 import ListIcon from "@/app/icons/ListIcon";
 import Sidebar from "./components/sidebar";
+import { Urbanist } from "next/font/google";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
+
+const urbanist = Urbanist({
+  subsets: ["latin"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+});
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const menuItems = [
@@ -15,10 +21,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   ];
 
   return (
-    <div className="min-h-[calc(100vh-15rem)] md:min-h-[calc(100vh-20rem)] flex flex-col h-auto px-16">
-      <div className="flex">
+    <div className="h-screen flex flex-col px-8 py-8">
+      <div className="flex-1 flex">
         <Sidebar menuItems={menuItems} />
-        <div className="flex-grow">{children}</div>
+        <div className={`${urbanist.className} flex-1 p-8 overflow-hidden rounded-md`}>{children}</div>
       </div>
     </div>
   );

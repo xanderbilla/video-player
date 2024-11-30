@@ -103,7 +103,7 @@ export default function Navbar({}: Props) {
   const isLogin = true;
   const path = usePathname();
   const pathUrl = path.split("/")[1];
-  const isPlayer = pathUrl === "player";
+  const isPlayer = pathUrl === "player" || pathUrl === "dashboard";
 
   const navLinks = [
     {

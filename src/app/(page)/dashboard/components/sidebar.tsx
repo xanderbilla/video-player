@@ -1,3 +1,4 @@
+import ProjectLogo from "@/app/components/ProjectLogo";
 import ProfileIcon from "@/app/icons/ProfileIcon";
 // import SidebarIcon from "@/app/icons/SidebarIcon";
 import Link from "next/link";
@@ -8,13 +9,12 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ menuItems }) => {
   return (
-    <div className="w-56 bg-gray-800 text-white flex flex-col border-r-2 border-r-gray-100/10 px-4">
-      
+    <div className="w-56 bg-gray-800 text-white flex flex-col px-4">
       {/* <button className="w-10 h-10 bg-gray-100/10 flex items-center justify-center rounded-full">
         <SidebarIcon />
       </button> */}
-
-      <div className="h-full flex flex-col items-start justify-between">
+      <ProjectLogo onlyProjectLogo/>
+      <div className="h-full flex flex-col items-start justify-between mt-8">
         <ul>
           {menuItems.map(
             (
