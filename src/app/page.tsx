@@ -1,17 +1,13 @@
-import { Suspense } from 'react'
-import VidPlayer from '@/app/Layout/VidPlayer'
-import Loading from '@/app/components/Loading'
+import React from 'react';
 
-function SearchBarFallback() {
-  return <Loading/>
-}
- 
-export default function Page() {
+interface Props {}
+
+export default function Home({}: Props) {
   return (
-    <>
-        <Suspense fallback={<SearchBarFallback />}>
-          <VidPlayer/>
-        </Suspense>
-    </>
-  )
+    <div>
+      <div className="h-[calc(100vh-15rem)] md:h-[calc(100vh-20rem)] flex items-center justify-center">
+        <span className='text-2xl'>Homepage</span>
+      </div>
+    </div>
+  );
 }

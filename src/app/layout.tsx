@@ -19,9 +19,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`font-sans h-screen ${inter.className}`}
+        className={`font-sans text-white h-screen bg-gray-800 ${inter.className}`}
       >
+        <Navbar />
         {children}
+        <Footer />
       </body>
     </html>
   );
