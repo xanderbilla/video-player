@@ -6,7 +6,7 @@ interface SidebarIconProps {
     color?: string;
 }
 
-const SidebarIcon: React.FC<SidebarIconProps> = ({ width = 24, height = 24, color = 'currentColor' }) => (
+const SidebarIcon: React.FC<SidebarIconProps> = ({ width = 28, height = 28, color = 'currentColor' }) => (
     <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 24 24">
         <path
             fill="none"
