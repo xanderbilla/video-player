@@ -1,68 +1,68 @@
-import React from 'react';
+import { useEffect, useState } from "react";
+import MuteIcon from "../icons/MuteIcon";
+import VolumeIcon from "../icons/VolumeIcon";
+import Volume2Icon from "../icons/Volume2";
+import Volume1Icon from "../icons/Volume1";
 
-interface Props {
-    volume: number;
-    setVolume: React.Dispatch<React.SetStateAction<number>>;
-}
+const VolumeController = ({
+  videoRef,
+}: {
+  videoRef: React.RefObject<HTMLVideoElement>;
+}) => {
+  const [isMuted, setIsMuted] = useState(videoRef.current?.muted || false);
+  const [volume, setVolume] = useState(videoRef.current?.volume || 1);
+  const [visible, setVisible] = useState(false);
 
-const VolumeController = (props: Props) => {
-    const { volume, setVolume } = props;
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.muted = isMuted;
+      videoRef.current.volume = volume;
+    }
+  }, [isMuted, volume, videoRef]);
 
-    const onVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setVolume(Number(e.target.value));
-    };
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setVolume(parseFloat(e.target.value));
+    if (videoRef.current) {
+      videoRef.current.muted = false;
+    }
+    setIsMuted(false);
+  };
 
-    return (
-        <div className="flex items-center">
-            <button
-                onClick={() => setVolume((prev) => Math.max(0, prev - 0.1))}
-                className="w-6 h-6 flex items-center justify-center"
-            >
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                >
-                    <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M20 12H4"
-                    />
-                </svg>
-            </button>
-            <input
-                type="range"
-                min={0}
-                max={1}
-                step={0.01}
-                value={volume}
-                onChange={onVolumeChange}
-                className="w-12 h-1 bg-gray-300 mx-2"
-            />
-            <button
-                onClick={() => setVolume((prev) => Math.min(1, prev + 0.1))}
-                className="w-6 h-6 flex items-center justify-center"
-            >
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                >
-                    <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                    />
-                </svg>
-            </button>
-        </div>
-    );
+  const toggleMute = () => {
+    setIsMuted(!isMuted);
+  };
+
+  return (
+    <div className="flex items-center gap-2 text-gray-700">
+      <button
+        onClick={toggleMute}
+        onMouseEnter={() => setVisible(true)}
+        className="transition-transform duration-300 ease-in-out hover:scale-110"
+      >
+        {isMuted ? (
+          <MuteIcon className="h-6 w-6 text-gray-700" />
+        ) : volume === 0 ? (
+          <VolumeIcon className="h-6 w-6 text-gray-700" />
+        ) : volume > 0.5 ? (
+          <Volume2Icon className="h-6 w-6 text-gray-700" />
+        ) : (
+          <Volume1Icon className="h-6 w-6 text-gray-700" />
+        )}
+      </button>
+      {visible && (
+        <input
+          type="range"
+          min="0"
+          max="1"
+          step="0.01"
+          value={isMuted ? 0 : volume}
+          onChange={handleVolumeChange}
+          onMouseLeave={() => setVisible(false)}
+          className="w-24 h-1 bg-gray-200 rounded-full appearance-none cursor-pointer transition-transform duration-300 ease-in-out"
+        />
+      )}
+    </div>
+  );
 };
 
 export default VolumeController;

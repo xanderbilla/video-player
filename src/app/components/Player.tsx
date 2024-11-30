@@ -13,6 +13,7 @@ import CaptionIcon from "../icons/CaptionIcon";
 import Image from "next/image";
 import InfoIcon from "../icons/InfoIcon";
 import Info from "../Layout/Info";
+import VolumeController from "./VolumeController";
 
 interface Props {
   src: string;
@@ -105,7 +106,7 @@ const Player = (props: Props) => {
       element.removeEventListener("progress", onProgress);
       element.removeEventListener("timeupdate", onTimeUpdate);
     };
-  }, [videoRef.current, isPlaying, isWaiting]);
+  }, [isPlaying, isWaiting]);
 
   useEffect(() => {
     if (!videoRef.current) return;
@@ -194,8 +195,7 @@ const Player = (props: Props) => {
         <div className="w-full h-full">
           <PlayIcon
             onClick={handlePlayPauseClick}
-            className={`absolute top-1/2 z-50 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-16 w-16 "
-          } transition-opacity duration-300 ease-in-out`}
+            className={`absolute top-1/2 z-50 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-16 w-16 transition-opacity duration-300 ease-in-out hover:scale-110`}
           />
         </div>
       )}
@@ -224,7 +224,7 @@ const Player = (props: Props) => {
             <h1 className="text-center text-3xl">{title}</h1>
             <button
               onClick={() => setShowInfo(true)}
-              className="hover:bg-gray-200/10 font-medium rounded-full p-2 px-3 gap-2 flex items-center justify-center"
+              className="hover:bg-gray-200/10 font-medium rounded-full p-2 px-3 gap-2 flex items-center justify-center transition-transform duration-300 ease-in-out hover:scale-110"
             >
               <InfoIcon className="h-6 w-6" />
               <span>Info</span>
@@ -247,14 +247,14 @@ const Player = (props: Props) => {
               onClick={progressBar}
             >
               <div
-              ref={bufferRef}
-              className="h-full bg-gray-400 rounded-full"
-              style={{ position: "absolute", top: 0, left: 0 }}
+                ref={bufferRef}
+                className="h-full bg-gray-400 rounded-full"
+                style={{ position: "absolute", top: 0, left: 0 }}
               />
               <div
-              ref={progressRef}
-              className="h-full bg-slate-800 rounded-full"
-              style={{ position: "absolute", top: 0, left: 0 }}
+                ref={progressRef}
+                className="h-full bg-slate-800 rounded-full"
+                style={{ position: "absolute", top: 0, left: 0 }}
               />
             </div>
 
@@ -262,16 +262,28 @@ const Player = (props: Props) => {
               <div className="w-full h-full flex items-center justify-start gap-4">
                 <div className="w-8 h-full flex items-center justify-center ">
                   {!isPlaying && !isWaiting && (
-                    <PlayIcon onClick={handlePlayPauseClick} />
+                    <PlayIcon
+                      onClick={handlePlayPauseClick}
+                      className="transition-transform duration-300 ease-in-out hover:scale-110"
+                    />
                   )}
                   {isPlaying && !isWaiting && (
-                    <PauseIcon onClick={handlePlayPauseClick} />
+                    <PauseIcon
+                      onClick={handlePlayPauseClick}
+                      className="transition-transform duration-300 ease-in-out hover:scale-110"
+                    />
                   )}
                 </div>
-
+                <VolumeController videoRef={videoRef} />
                 <div className="w-auto h-full flex items-center justify-between gap-2">
-                  <Backward onClick={backward10Sec} />
-                  <Forward onClick={forward15Sec} />
+                  <Backward
+                    onClick={backward10Sec}
+                    className="transition-transform duration-300 ease-in-out hover:scale-110"
+                  />
+                  <Forward
+                    onClick={forward15Sec}
+                    className="transition-transform duration-300 ease-in-out hover:scale-110"
+                  />
                 </div>
 
                 <ElapsedTimeTracker
@@ -283,13 +295,13 @@ const Player = (props: Props) => {
               </div>
 
               <div className="w-full h-full flex items-center justify-end gap-4">
-                <CaptionIcon />
+                <CaptionIcon className="transition-transform duration-300 ease-in-out hover:scale-110" />
 
-                <PlaybackRate
-                  videoRef={videoRef}
-                  setPlaybackRate={setPlaybackRate}
+                <PlaybackRate videoRef={videoRef} />
+                <FullScrIcon
+                  onClick={fullScreen}
+                  className="transition-transform duration-300 ease-in-out hover:scale-110"
                 />
-                <FullScrIcon onClick={fullScreen} />
               </div>
             </div>
           </div>
